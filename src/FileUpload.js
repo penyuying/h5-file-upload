@@ -8,7 +8,7 @@
         var itemTemp = "";
         var defaults = {
             fileTypeExts: '*.jpg;*.png;*.gif;*.jpeg',//允许上传的文件类型，格式'*.jpg;*.doc'
-            uploader: 'http://kmall.kidmadeto.com/kms/videoReplyPicUpload',//文件提交的地址
+            uploader: "",//'http://kmall.kidmadeto.com/kms/videoReplyPicUpload',//文件提交的地址
             auto: true,//是否开启自动上传
             async:true,//true为异步
             submitUpload: true,//是否开启自动提交
@@ -17,29 +17,30 @@
             formData: null,//发送给服务端的参数，格式：{key1:value1,key2:value2}
             dataType:"",
             fileObjName: 'file',//在后端接受文件的参数名称，如PHP中的$_FILES['file']
-            fileSizeLimit: 1024 * 1024 * 10,//允许上传的文件大小，单位KB
+            fileSizeLimit: 1024 * 10,//允许上传的文件大小，单位KB
             showUploadedPercent: true,//是否实时显示上传的百分比，如20%
             showUploadedSize: false,//是否实时显示已上传的文件大小，如1M/2M
             buttonText: '选择文件',//上传按钮上的文字
-            compressWidth: 800,//压缩后最大宽度（0为不限）
-            compressHeight: 2800,//压缩后最大高度（0为不限）
-            compressTotal: 4000000,//压缩后的总像素（0为不限）
-            compressMinSize: 1024 * 100,//大小大于时压缩
+            compressWidth: 1920,//压缩后最大宽度（0为不限）
+            compressHeight: 1920,//压缩后最大高度（0为不限）
+            compressTotal: 0,//压缩后的总像素（0为不限）
+            compressMinSize: 1024*3,//大小大于时压缩KB
             compressBg: "rgba(0, 0, 0, 0)",//压缩后的背景
             encoderOptions:0.6,//jpeg图片的压缩质量(0.0-1.0)
-            tile:10000000,//需要使用瓦片的最小像素(瓦片大小)
+            tile:1000000,//需要使用瓦片的最小像素(瓦片大小)10万像素
             removeTimeout: 1000,//上传完成后进度条的消失时间
             itemTemplate: itemTemp,//上传队列显示的模板
-            onUploadStart: null,//上传开始时的动作
+            onReaderFile:null,//读取文件的回调
+            onUploadStart: null,//上传开始时的回调
             onProgress:null,//上传进度回调
-            onUploadSuccess: null,//上传成功的动作
-            onUploadComplete: null,//上传完成的动作
-            onUploadError: null, //上传失败的动作
-            onCompressStart:null,//开始压缩
+            onUploadSuccess: null,//上传成功的回调
+            onUploadComplete: null,//上传完成的回调
+            onUploadError: null, //上传失败的回调
+            onCompressStart:null,//开始压缩的回调
             onCompress: null,//压缩完的回调
             onSizeError: null,//文件超过大小回调
             onFileTypeError:null,//文件类型错误回调
-            onInit: null,//初始化时的动作
+            onInit: null,//初始化时的回调
             onCancel: null//删除掉某个文件后的回调函数，可传入参数file(此功能暂时没做)
         };
         var _options = this._options = extend(defaults, opts);
@@ -61,7 +62,6 @@
             if (option.onInit && option.onInit instanceof Function) {
                 option.onInit && option.onInit(_el);
             }
-            
         },
 
         /**
@@ -70,25 +70,20 @@
         _fileReader: function (file,index) {
             var _this = this,
                 option=_this._options,
-                reader = new FileReader();
+                _ext=file.name.split('.').pop();
+
+           //如果图片格式不支持压缩或图片大小小于100kb，则直接上传
+            if(!_ext || _this._inArray(_ext.toLowerCase(),["jpg","jpeg","png","gif","bmp","jpe"])<0||!option.compressMinSize || file.size <= option.compressMinSize * 1024){
+                _this._funUploadFile(file,index);
+                return file;
+            }
+
+            var  reader = new FileReader();
 
             reader.onload = function () {
                 var result = this.result;
                 var img = new Image();
                 img.src = result;
-
-                //$(li).css("background-image", "url(" + result + ")");
-
-                //如果图片大小小于100kb，则直接上传
-                if (!option.compressMinSize || result.length <= option.compressMinSize * 1024) {
-                    img = null;
-
-                    var _data=_this._toBuffer(result, file.type,file.name);
-                    _this._funUploadFile(_data,index);
-
-                    return;
-                }
-
                 //      图片加载完毕之后进行压缩，然后上传
                 if (img.complete) {
                     callback();
@@ -121,13 +116,16 @@
             var _accept = getMimeList(getFileTypes(option.fileTypeExts));
             _accept = _accept && _accept.join(",") || "*";
 
-            var fileFrag = createNode(`<div style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;"><input class="_select-file-btn_"
-                style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;font-size: 1000000px;filter: alpha(opacity=0);opacity: 0;"
-                ${option.multi ? ' multiple': ''}
-                type="file" name="fileselect[]" accept="${_accept}"></div>`),
+            var fileFrag = createNode(`<div style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;">
+                    <span class="_select-btn-text_" style="display:block;line-height:50px;text-align:center;font-size: 12px;color:#999999;">${option.buttonText}</span>
+                    <input class="_select-file-btn_"
+                    style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;font-size: 1000000px;filter: alpha(opacity=0);opacity: 0;"
+                    ${option.multi ? ' multiple': ''}
+                    type="file" name="fileselect" accept="${_accept}">
+                </div>`),
                 fileBtn = fileFrag.querySelectorAll("input"),
                 btnWrap = fileFrag.querySelectorAll("div");
-
+            el.style.position="relative";
             el.appendChild(fileFrag);
 
             return {
@@ -181,9 +179,9 @@
          * 对比数组中的值
          */
         _inArray: function (item, arr) {
-            var res = false;
+            var res =-1;
             if (!item || !arr || arr.length <= 0) {
-                return res;
+                return -1;
             }
             if (typeof item=="string") {
                 item = item.toLowerCase();
@@ -194,20 +192,29 @@
                     _item = _item.toLowerCase();
                 }
                 if (item == _item) {
-                    res = true;
-                    return res;
+                    res = i;
+                    break;
                 }
             }
+            return res;
         },
         //获取选择文件，file控件
         _funGetFiles: function (e) {
             var _this = this,
+                option = _this._options,
                 _fileObj = _this._fileObj;
             // 获取文件列表对象
             var files = e.target.files;
 
+            if(option.onReaderFile instanceof Function){
+                option.onReaderFile({
+                    files:files
+                });
+            }
+            
             //过滤文件
             files = _this._filter(files);
+
             //for (var i = 0, len = files.length; i < len; i++) {
             //    _fileObj.fileFilter.push(files[i]);
             //}
@@ -229,6 +236,7 @@
                 //判断是否是自动上传
                 if (option.auto) {
                     _this._execUpload(file, i);
+                    _this._files = null;
                 }else {
                     //如果配置非自动上传，绑定上传事件
                     //$html.find('.uploadbtn').on('click', (function (file) {
@@ -236,7 +244,6 @@
                     //})(file));
                 }
             }
-            _this._files = null;
         },
 
         /**
@@ -263,6 +270,9 @@
 
         //},
         //    使用canvas对大图片进行压缩
+        _getRatio:function(width,height,option){
+            return Math.max(Math.max((width / (option.compressWidth > 0 && option.compressWidth||width)) || 0, (height / (option.compressHeight > 0 && option.compressHeight||height)) || 0) || 0, Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal||width * height)) || 1)||1;
+        },
         _compress: function (img,type,index) {
             var _this = this,
                 option = _this._options,
@@ -286,7 +296,7 @@
             //compressHeight: 800,//压缩后最大高度（0为不限）
             //compressTotal: 4000000,//压缩后的总像素（0为不限）
 
-            _ratio = Math.max(Math.max((width / (option.compressWidth > 0 && option.compressWidth || 1)) || 0, (height / (option.compressHeight > 0 && option.compressHeight || 1)) || 0) || 0, Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal || 1)) || 0)||1;
+            _ratio = _this._getRatio(_width,_height,option);//Math.max(Math.max((width / (option.compressWidth > 0 && option.compressWidth || 0)) || 0, (height / (option.compressHeight > 0 && option.compressHeight || 0)) || 0) || 0, Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal || 0)) || 0)||1;
 
             
 
@@ -306,6 +316,7 @@
                     height: _height,//压缩前的高度
                     compressWidth: width,//压缩前的宽度
                     compressHeight: height,//压缩前的高度
+                    ratio:ratio//绽放的倍数
                 });
             }
 
@@ -318,9 +329,6 @@
 
             //如果图片像素大于100万则使用瓦片绘制
             var count;
-
-
-            
 
             if ((count = width * height / (option.tile||1000000)) > 1) {
                 count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
@@ -474,7 +482,7 @@
                 }
 
                 if (option.formData) {
-                    for (key in option.formData) {
+                    for (var key in option.formData) {
                         fd.append(key, option.formData[key]);
                     }
                 }
@@ -524,7 +532,7 @@
      * @constructor
      */
     function FormDataShim() {
-        console.warn('using formdata shim');
+        // console.warn('using formdata shim');
 
         var o = this,
             parts = [],
@@ -649,7 +657,10 @@
         var result = [];
         var arr1 = str.split(";");
         for (var i = 0, len = arr1.length; i < len; i++) {
-            result.push(arr1[i].split(".").pop());
+            var _ext=arr1[i].split(".").pop();
+            if(_ext){
+                result.push(_ext.toLowerCase());
+            }
         }
         return result;
     }
