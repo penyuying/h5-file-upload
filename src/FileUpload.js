@@ -24,9 +24,9 @@
             compressWidth: 1920,//压缩后最大宽度（0为不限）
             compressHeight: 1920,//压缩后最大高度（0为不限）
             compressTotal: 0,//压缩后的总像素（0为不限）
-            compressMinSize: 1024*3,//大小大于时压缩KB
+            compressMinSize: 100,//大小大于时压缩KB
             compressBg: "rgba(0, 0, 0, 0)",//压缩后的背景
-            encoderOptions:0.6,//jpeg图片的压缩质量(0.0-1.0)
+            encoderOptions:0.8,//jpeg图片的压缩质量(0.0-1.0)
             tile:1000000,//需要使用瓦片的最小像素(瓦片大小)10万像素
             removeTimeout: 1000,//上传完成后进度条的消失时间
             itemTemplate: itemTemp,//上传队列显示的模板
@@ -116,8 +116,8 @@
             var _accept = getMimeList(getFileTypes(option.fileTypeExts));
             _accept = _accept && _accept.join(",") || "*";
 
-            var fileFrag = createNode(`<div style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;">
-                    <span class="_select-btn-text_" style="display:block;line-height:50px;text-align:center;font-size: 12px;color:#999999;">${option.buttonText}</span>
+            var fileFrag = createNode(`<div style="display:inline-block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;">
+                    <span class="_select-btn-text_" style="display:inline-block;width:100%;line-height:50px;text-align:center;font-size: 12px;color:#999999;">${option.buttonText}</span>
                     <input class="_select-file-btn_"
                     style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;font-size: 1000000px;filter: alpha(opacity=0);opacity: 0;"
                     ${option.multi ? ' multiple': ''}
@@ -257,18 +257,7 @@
                 _this._funUploadFile(file, index);
             }
         },
-        ///**
-        // * 选择文件
-        // */
-        //_select: function () {
-        //    var _this = this,
-        //        files=_this._files,
-        //            option = _this._options;
-        //    if (option.submitUpload) {
-        //        _this.execUpload();
-        //    }
 
-        //},
         //    使用canvas对大图片进行压缩
         _getRatio:function(width,height,option){
             return Math.max(Math.max((width / (option.compressWidth > 0 && option.compressWidth||width)) || 0, (height / (option.compressHeight > 0 && option.compressHeight||height)) || 0) || 0, Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal||width * height)) || 1)||1;
@@ -282,8 +271,6 @@
                 ratio=1,
                 _ratio = 0;
 
-            
-
             //    用于压缩图片的canvas
             var canvas = document.createElement("canvas"),
                 ctx = canvas.getContext('2d');
@@ -292,13 +279,7 @@
             var tCanvas = document.createElement("canvas"),
                 tctx = tCanvas.getContext("2d");
 
-            //compressWidth: 800,//压缩后最大宽度（0为不限）
-            //compressHeight: 800,//压缩后最大高度（0为不限）
-            //compressTotal: 4000000,//压缩后的总像素（0为不限）
-
-            _ratio = _this._getRatio(_width,_height,option);//Math.max(Math.max((width / (option.compressWidth > 0 && option.compressWidth || 0)) || 0, (height / (option.compressHeight > 0 && option.compressHeight || 0)) || 0) || 0, Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal || 0)) || 0)||1;
-
-            
+            _ratio = _this._getRatio(_width,_height,option);
 
             //计算图片压缩后的大小
             if (_ratio > 1) {
@@ -422,17 +403,13 @@
         //文件上传
         _funUploadFile: function (file,index) {
             var _this = this,
-                xhr = false,
+                xhr = createXMLHttpRequest()||false,
                 option = _this._options,
                 _fileObj = _this._fileObj;
             _this._files = null;
-            try {
-                xhr = new XMLHttpRequest();//尝试创建 XMLHttpRequest 对象，除 IE 外的浏览器都支持这个方法。
-            } catch (e) {
-                xhr = ActiveXobject("Msxml12.XMLHTTP");//使用较新版本的 IE 创建 IE 兼容的对象（Msxml2.XMLHTTP）。
-            }
+            
 
-            if (xhr.upload) {
+            if (xhr && xhr.upload) {
                 // 上传中
                 xhr.upload.addEventListener("progress", function (e) {
                     _this._onProgress(index,file, e.loaded, e.total);
@@ -490,11 +467,28 @@
                 xhr.send(fd);
             }
         }
-        
     }
 
     return _Upload;
 
+    /**
+     * 创建createXMLHttpRequest
+     * 
+     * @returns XMLHttpRequestObject
+     */
+    function createXMLHttpRequest() {
+        var XMLHttpReq;
+        try {
+            XMLHttpReq = new XMLHttpRequest();//兼容非IE浏览器，直接创建XMLHTTP对象
+        }catch(e) {
+            try {
+                XMLHttpReq = new ActiveXObject("Msxml2.XMLHTTP");//IE高版本创建XMLHTTP
+            }catch(e) {
+                XMLHttpReq = new ActiveXObject("Microsoft.XMLHTTP");//IE低版本创建XMLHTTP
+            }
+        }
+        return XMLHttpReq;
+    }
 
   /**
   * 获取blob对象的兼容性写法
