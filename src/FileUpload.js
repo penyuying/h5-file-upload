@@ -1,4 +1,15 @@
-﻿var FileUpload = (function () {
+﻿
+/*
+eslint-disable no-unused-vars
+*/
+var FileUpload = (function () {
+    /**
+     * 文件上传插件
+     * @class
+     * @alias FileUpload
+     * @param {Element} el 上传按钮放置的元素
+     * @param {Object} opts 配置选项
+     */
     function _Upload(el, opts) {
         if (!el) {
             return;
@@ -65,6 +76,10 @@
 
         /**
          * 读取图片文件
+         *
+         * @param {File} file 文件对象
+         * @param {Number} index 文件的索引号
+         * @returns {file|null}
          */
         _fileReader: function (file, index) {
             var _this = this,
@@ -90,6 +105,10 @@
                     img.onload = callback;
                 }
 
+                /**
+                 * 图片载完成或压缩完后的回调
+                 *
+                 */
                 function callback() {
                     var data = _this._compress(img, file.type, index);// 压缩图片
                     data = _this._toBuffer(data, file.type, file.name);
@@ -102,8 +121,12 @@
 
             reader.readAsDataURL(file);
         },
+
         /**
          * 添加上传文件按钮
+         *
+         * @param {Element} el 需要添加按钮的元素
+         * @returns {Object} 返回按钮及按钮的包裹元素
          */
         _addFileBtn: function (el) {
             var _this = this,
@@ -112,7 +135,7 @@
                 return;
             }
             var _accept = getMimeList(getFileTypes(option.fileTypeExts));
-            _accept = _accept && _accept.join(',') || '*';
+            _accept = (_accept && _accept.join(',')) || '*';
 
             var fileFrag = createNode(`<div style="display:inline-block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;">
                     <span class="_select-btn-text_" style="display:inline-block;width:100%;line-height:50px;text-align:center;font-size: 12px;color:#999999;">${option.buttonText}</span>
@@ -127,12 +150,16 @@
             el.appendChild(fileFrag);
 
             return {
-                fileInputWrap: btnWrap && btnWrap[0] || null,
-                fileInput: fileBtn && fileBtn[0] || null
+                fileInputWrap: (btnWrap && btnWrap[0]) || null,
+                fileInput: (fileBtn && fileBtn[0]) || null
             };
         },
+
         /**
          * 过滤文件
+         *
+         * @param {Array<Flie>} files 文件列表
+         * @returns {Array<Flie>} 返回可用符合条件的文件列表
          */
         _filter: function (files) {
             var _this = this,
@@ -175,6 +202,10 @@
 
         /**
          * 对比数组中的值
+         *
+         * @param {any} item 需要查找的值
+         * @param {Array<any>} arr 数组
+         * @returns {Number} 返回查找到的索引
          */
         _inArray: function (item, arr) {
             var res = -1;
@@ -196,11 +227,16 @@
             }
             return res;
         },
-        // 获取选择文件，file控件
+
+        /**
+         * 文件改变时处理文件的文件
+         *
+         * @param {Event} e 事件对象
+         */
         _funGetFiles: function (e) {
             var _this = this,
-                option = _this._options,
-                _fileObj = _this._fileObj;
+                option = _this._options;
+            // var _fileObj = _this._fileObj;
             // 获取文件列表对象
             var files = e.target.files;
 
@@ -245,6 +281,9 @@
 
         /**
          * 执行上传
+         *
+         * @param {file} file 当前上传的文件项
+         * @param {Number} index 当前上传的文件项的索引
          */
         _execUpload: function (file, index) {
             var _this = this;
@@ -255,10 +294,38 @@
             }
         },
 
-        //    使用canvas对大图片进行压缩
+        /**
+         * 获取最大压缩的倍数（使用canvas对大图片进行压缩的倍数）
+         *
+         * @param {Number} width 图片的宽度
+         * @param {NUmber} height 图片的高度
+         * @param {Object} option 压缩选项
+         * @param {Number} option.compressWidth 图片上传最大宽度
+         * @param {Number} option.compressHeight 图片上传最大高度
+         * @param {Number} option.compressTotal 图片上传最大像素数
+         * @returns {Number} 返回最大压缩的倍数
+         */
         _getRatio: function(width, height, option) {
-            return Math.max(Math.max((width / (option.compressWidth > 0 && option.compressWidth || width)) || 0, (height / (option.compressHeight > 0 && option.compressHeight || height)) || 0) || 0, Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal || width * height)) || 1) || 1;
+            // 宽度压缩的倍数（水平像素数）
+            var _width = (width / ((option.compressWidth > 0 && option.compressWidth) || width)) || 0;
+            // 高度压缩的倍数（垂直像素数）
+            var _height = (height / ((option.compressHeight > 0 && option.compressHeight) || height)) || 0;
+
+            // 面积压缩的倍数（总像素）
+            var _area = Math.sqrt(width * height / ((option.compressTotal > 0 && option.compressTotal) || width * height)) || 1;
+
+            // 返回最大压缩的倍数
+            return Math.max(Math.max(_width, _height) || 0, _area) || 1;
         },
+
+        /**
+         * 图片压缩
+         *
+         * @param {Element} img 需要压缩的图片
+         * @param {String} type 图片格式
+         * @param {Number} index 图片索引
+         * @returns {String} 返回压缩后图片的base64码
+         */
         _compress: function (img, type, index) {
             var _this = this,
                 option = _this._options,
@@ -356,24 +423,38 @@
 
             return ndata;
         },
+
         /**
          * 转文件流
+         *
          * @param {String} basestr base64文本
          * @param {String} type 文件类型
+         * @param {String} fileName 文件名
+         * @returns {blob} 文件对象
          */
         _toBuffer: function (basestr, type, fileName) {
             var text = window.atob(basestr.split(',')[1]),
-                buffer = new Uint8Array(text.length),
-                pecent = 0, loop = null;
+                buffer = new Uint8Array(text.length);//, 
+                // pecent = 0,
+                // loop = null;
 
             for (var i = 0; i < text.length; i++) {
-                buffer[i] = text.charCodeAt(i);
+                buffer[i] = text.charCodeAt(i); // 返回指定索引处字符的 Unicode
             }
 
             var blob = getBlob([buffer], type);
             blob.name = fileName || '';
             return blob;
         },
+
+        /**
+         * 文件上传进度
+         *
+         * @param {Number} index 文件索引
+         * @param {File} file 上传的文件
+         * @param {Number} loaded 当前加载了多少字节流
+         * @param {Number} total 总共有多少字节流
+         */
         _onProgress: function (index, file, loaded, total) {
             var _this = this,
                 option = _this._options;
@@ -381,8 +462,8 @@
                 option.onProgress({
                     index: index,
                     file: file,
-                    loaded: loaded,
-                    total: total
+                    loaded: loaded, // 表示当前加载了多少字节流
+                    total: total// 表示总共有多少字节流
                 });
             }
             // var eleProgress = _this.find('#fileupload_' + instanceNumber + '_' + file.index + ' .uploadify-progress');
@@ -395,8 +476,14 @@
             //    eleProgress.nextAll('.up_percent').text(percent);
             // }
             // eleProgress.children('.uploadify-progress-bar').css('width', percent);
-        },		// 文件上传进度
-        // 文件上传
+        },
+
+        /**
+         * 文件上传
+         *
+         * @param {File} file 上传的文件
+         * @param {Number} index 文件索引
+         */
         _funUploadFile: function (file, index) {
             var _this = this,
                 xhr = createXMLHttpRequest() || false,
@@ -469,16 +556,16 @@
     /**
      * 创建createXMLHttpRequest
      *
-     * @returns XMLHttpRequestObject
+     * @returns {XMLHttpRequest} 返回XMLHttpRequestObject
      */
     function createXMLHttpRequest() {
         var XMLHttpReq;
         try {
             XMLHttpReq = new XMLHttpRequest();// 兼容非IE浏览器，直接创建XMLHTTP对象
-        }catch (e) {
+        } catch (e) {
             try {
                 XMLHttpReq = new ActiveXObject('Msxml2.XMLHTTP');// IE高版本创建XMLHTTP
-            } catch(e) {
+            } catch (e) {
                 XMLHttpReq = new ActiveXObject('Microsoft.XMLHTTP');// IE低版本创建XMLHTTP
             }
         }
@@ -486,14 +573,14 @@
     }
 
     /**
-  * 获取blob对象的兼容性写法
-  * @param buffer
-  * @param format
-  * @returns {*}
-  */
+    * 获取blob对象的兼容性写法
+    * @param {Uint8Array<buffer>} buffer buffer列表
+    * @param {String} format 文件类型
+    * @returns {Blob}
+    */
     function getBlob(buffer, format) {
         try {
-            return new Blob(buffer, { type: format});
+            return new Blob(buffer, {type: format});
         } catch (e) {
             var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder)();
             buffer.forEach(function (buf) {
@@ -504,8 +591,9 @@
     }
 
     /**
-   * 获取formdata
-   */
+     * 获取formdata（FormData对象兼容）
+     * @returns {FormData}
+     */
     function getFormData() {
         var isNeedShim = ~navigator.userAgent.indexOf('Android') &&
             ~navigator.vendor.indexOf('Google') &&
@@ -575,7 +663,7 @@
      * 创建转换成dom元素
      *
      * @param {String} html html文本
-     * @param {Object} itemData 数据对象
+     * @param {Object} data 数据对象
      * @returns {Node} DOM节点/元素
      */
     function createNode(html, data) {
@@ -596,17 +684,21 @@
     }
 
     /**
-    * 合并对象
-    */
+     * 合并对象
+     *
+     * @param {any} def 默认对象
+     * @param {any} nowObj 需要合并的对象
+     * @returns {Object} 返回合并后的对象
+     */
     function extend(def, nowObj) {
-        var _this = this;
+        // var _this = this;
         def = def || {};
         if (!nowObj) {
             return def;
         }
         for (var item in nowObj) {
             if (def[item] instanceof Object) {
-                _this._extend(def[item], nowObj[item]);
+                extend(def[item], nowObj[item]);
             } else {
                 def[item] = nowObj[item];
             }
@@ -614,7 +706,13 @@
         return def;
     }
 
-    // 将文件的单位由bytes转换为KB或MB，若第二个参数指定为true，则永远转换为KB
+    /**
+     * 将文件的单位由bytes转换为KB或MB
+     *
+     * @param {Number} size 文件的大小（bit）
+     * @param {Boolean} byKB 指定为true，则永远转换为KB
+     * @returns {Number}
+     */
     function formatFileSize(size, byKB) {
         if (size > 1024 * 1024 && !byKB) {
             size = (Math.round(size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
@@ -624,17 +722,28 @@
         return size;
     }
 
-    // 根据文件序号获取文件
-    function getFile(index, files) {
-        for (var i = 0; i < files.length; i++) {
-            if (files[i].index == index) {
-                return files[i];
-            }
-        }
-        return false;
-    }
+    // /**
+    //  * 根据文件序号获取文件
+    //  *
+    //  * @param {Number} index 文件索引
+    //  * @param {Array<File>} files 文件集
+    //  * @returns {File|false}
+    //  */
+    // function getFile(index, files) {
+    //     for (var i = 0; i < files.length; i++) {
+    //         if (files[i].index == index) {
+    //             return files[i];
+    //         }
+    //     }
+    //     return false;
+    // }
 
-    // 将输入的文件类型字符串转化为数组,原格式为*.jpg;*.png
+    /**
+     * 将输入的文件类型字符串转化为数组,原格式为*.jpg;*.png
+     *
+     * @param {String} str 文件名
+     * @returns {Array<String>} 返回文件类型列表
+     */
     function getFileTypes(str) {
         var result = [];
         var arr1 = str.split(';');
@@ -649,6 +758,9 @@
 
     /**
      * 获取MIME列表
+     *
+     * @param {any} arr 文件类型列表
+     * @returns {Array<String>} 文件MIME列表
      */
     function getMimeList(arr) {
         var resArr = [];
@@ -662,12 +774,17 @@
         }
         if (resArr.length <= 0) {
             resArr.push('*');
+        } else {
+            resArr.push('image/*');// 设置所有图片都支持选择（因为有些手机指定格式有问题）
         }
         return resArr;
     }
 
     /**
      * 获取MIME
+     *
+     * @param {any} type 文件类型
+     * @returns {String}
      */
     function getMime(type) {
         var res = '';
