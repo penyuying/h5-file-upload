@@ -1,0 +1,41 @@
+{
+  "name": "h5-file-upload",
+  "version": "1.0.0",
+  "description": "html5文件上传，带图片压缩功能",
+  "main": "./dist/FileUpload.js",
+  "scripts": {
+    "build": "node build/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/penyuying/H5FileUpload.git"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-istanbul": "^4.1.5",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.12.1",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "uglify-js": "^3.2.1",
+    "zlib": "^1.0.5"
+  },
+  "keywords": [
+    "file",
+    "upload",
+    "JS文件上传，图片上传，html5上传"
+  ],
+  "author": "penyuying",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/penyuying/H5FileUpload/issues"
+  },
+  "homepage": "https://github.com/penyuying/H5FileUpload#readme"
+}
