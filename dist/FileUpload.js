@@ -175,6 +175,7 @@ _Upload.prototype = {
                     // alert('文件' + thisFile.name + '大小超出限制！');
                     if (option.onSizeError instanceof Function) {
                         option.onSizeError({
+                            el: _this._el,
                             index: i, // 当前文件的索引
                             fileName: thisFile.name, // 文件名
                             file: thisFile, // 文件
@@ -189,6 +190,7 @@ _Upload.prototype = {
                 } else {
                     if (option.onFileTypeError && option.onFileTypeError instanceof Function) {
                         option.onFileTypeError({
+                            el: _this._el,
                             index: i, // 当前文件的索引
                             fileName: thisFile.name, // 文件名
                             file: thisFile, // 文件
@@ -245,6 +247,7 @@ _Upload.prototype = {
 
         if (option.onReaderFile instanceof Function) {
             option.onReaderFile({
+                el: _this._el,
                 files: files
             });
         }
@@ -360,6 +363,7 @@ _Upload.prototype = {
 
         if (option.onCompressStart && option.onCompressStart instanceof Function) {
             option.onCompressStart({
+                el: _this._el,
                 index: index, // 文件索引
                 file: file,
                 // base64Data: img.src,//文件内容
@@ -415,6 +419,7 @@ _Upload.prototype = {
              * @param {Number} param4 压缩率
              */
             option.onCompress({
+                el: _this._el,
                 index: index, // 文件索引
                 file: file,
                 base64Data: ndata, // 文件内容
@@ -468,6 +473,7 @@ _Upload.prototype = {
             option = _this._options;
         if (option.onProgress && option.onProgress instanceof Function) {
             option.onProgress({
+                el: _this._el,
                 index: index,
                 file: file,
                 loaded: loaded, // 表示当前加载了多少字节流
@@ -519,6 +525,7 @@ _Upload.prototype = {
                             _data = JSON.parse(xhr.responseText);
                         }
                         option.onUploadSuccess && option.onUploadSuccess({
+                            el: _this._el,
                             file: file,
                             index: index
                         }, _data);
@@ -528,17 +535,23 @@ _Upload.prototype = {
                         // }, option.removeTimeout);
                     } else {
                         option.onUploadError && option.onUploadError({
+                            el: _this._el,
                             file: file,
                             index: index
                         }, xhr);
                     }
-                    option.onUploadComplete && option.onUploadComplete(file, xhr);
+                    option.onUploadComplete && option.onUploadComplete({
+                        el: _this._el,
+                        file: file,
+                        index: index
+                    }, xhr);
                     // 清除文件选择框中的已有值
                     _fileObj.fileInput.value = '';
                 }
             };
 
             option.onUploadStart && option.onUploadStart({
+                el: _this._el,
                 file: file,
                 index: index,
                 fileName: file.name
