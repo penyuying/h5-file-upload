@@ -1,8 +1,4 @@
-﻿
-/*
-eslint-disable no-unused-vars
-*/
-var FileUpload = (function () {
+﻿// let FileUpload = (function () {
     /**
      * 文件上传插件
      * @class
@@ -15,8 +11,8 @@ var FileUpload = (function () {
             return;
         }
         this._el = el;
-        var itemTemp = '';
-        var defaults = {
+        let itemTemp = '';
+        let defaults = {
             fileTypeExts: '*.jpg;*.png;*.gif;*.jpeg', // 允许上传的文件类型，格式'*.jpg;*.doc'
             uploader: '', // 'http://kmall.kidmadeto.com/kms/videoReplyPicUpload',//文件提交的地址
             auto: true, // 是否开启自动上传
@@ -53,18 +49,18 @@ var FileUpload = (function () {
             onInit: null, // 初始化时的回调
             onCancel: null// 删除掉某个文件后的回调函数，可传入参数file(此功能暂时没做)
         };
-        var _options = this._options = extend(defaults, opts);
+        let _options = this._options = extend(defaults, opts);
         _options.el = el;
         this._init();
     }
 
     _Upload.prototype = {
         _init: function () {
-            var _this = this,
+            let _this = this,
                 option = _this._options,
                 _el = _this._el;
             _this._files = null;
-            var _fileObj = _this._fileObj = _this._addFileBtn(_el) || {};
+            let _fileObj = _this._fileObj = _this._addFileBtn(_el) || {};
             // _fileObj.fileFilter = [];//过滤后的文件数组
             _fileObj.fileInput && _fileObj.fileInput.addEventListener('change', function (e) {
                 _this._funGetFiles(e);
@@ -82,7 +78,7 @@ var FileUpload = (function () {
          * @returns {file|null}
          */
         _fileReader: function (file, index) {
-            var _this = this,
+            let _this = this,
                 option = _this._options,
                 _ext = file.name.split('.').pop();
 
@@ -92,11 +88,11 @@ var FileUpload = (function () {
                 return file;
             }
 
-            var reader = new FileReader();
+            let reader = new FileReader();
 
             reader.onload = function () {
-                var result = this.result;
-                var img = new Image();
+                let result = this.result;
+                let img = new Image();
                 img.src = result;
                 //      图片加载完毕之后进行压缩，然后上传
                 if (img.complete) {
@@ -110,7 +106,7 @@ var FileUpload = (function () {
                  *
                  */
                 function callback() {
-                    var data = _this._compress(img, file.type, index);// 压缩图片
+                    let data = _this._compress(img, file.type, index,file);// 压缩图片
                     data = _this._toBuffer(data, file.type, file.name);
 
                     _this._funUploadFile(data, index);
@@ -129,15 +125,15 @@ var FileUpload = (function () {
          * @returns {Object} 返回按钮及按钮的包裹元素
          */
         _addFileBtn: function (el) {
-            var _this = this,
+            let _this = this,
                 option = _this._options;
             if (!el) {
                 return;
             }
-            var _accept = getMimeList(getFileTypes(option.fileTypeExts));
+            let _accept = getMimeList(getFileTypes(option.fileTypeExts));
             _accept = (_accept && _accept.join(',')) || '*';
 
-            var fileFrag = createNode(`<div style="display:inline-block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;">
+            let fileFrag = createNode(`<div style="display:inline-block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;">
                     <span class="_select-btn-text_" style="display:inline-block;width:100%;line-height:50px;text-align:center;font-size: 12px;color:#999999;">${option.buttonText}</span>
                     <input class="_select-file-btn_"
                     style="display:block;position: absolute;top: 0;left: 0;width: 100%;height: 100%;font-size: 1000000px;filter: alpha(opacity=0);opacity: 0;"
@@ -162,18 +158,19 @@ var FileUpload = (function () {
          * @returns {Array<Flie>} 返回可用符合条件的文件列表
          */
         _filter: function (files) {
-            var _this = this,
+            let _this = this,
                 arr = [],
                 option = _this._options,
                 typeArray = getFileTypes(option.fileTypeExts);
             if (typeArray.length > 0) {
-                for (var i = 0, len = files.length; i < len; i++) {
-                    var thisFile = files[i];
+                for (let i = 0, len = files.length; i < len; i++) {
+                    let thisFile = files[i];
 
                     if (parseInt(formatFileSize(thisFile.size, true)) > option.fileSizeLimit) {
                         // alert('文件' + thisFile.name + '大小超出限制！');
                         if (option.onSizeError instanceof Function) {
                             option.onSizeError({
+                                index:i,//当前文件的索引
                                 fileName: thisFile.name, // 文件名
                                 file: thisFile, // 文件
                                 maxSize: formatFileSize(option.fileSizeLimit * 1024 || 0, true), // 限制的最大大小
@@ -187,6 +184,7 @@ var FileUpload = (function () {
                     } else {
                         if (option.onFileTypeError && option.onFileTypeError instanceof Function) {
                             option.onFileTypeError({
+                                index:i,//当前文件的索引
                                 fileName: thisFile.name, // 文件名
                                 file: thisFile, // 文件
                                 type: thisFile.name.split('.').pop(), // 当前文件类型
@@ -208,15 +206,15 @@ var FileUpload = (function () {
          * @returns {Number} 返回查找到的索引
          */
         _inArray: function (item, arr) {
-            var res = -1;
+            let res = -1;
             if (!item || !arr || arr.length <= 0) {
                 return -1;
             }
             if (typeof item == 'string') {
                 item = item.toLowerCase();
             }
-            for (var i = 0; i < arr.length; i++) {
-                var _item = arr[i];
+            for (let i = 0; i < arr.length; i++) {
+                let _item = arr[i];
                 if (typeof _item == 'string') {
                     _item = _item.toLowerCase();
                 }
@@ -234,11 +232,11 @@ var FileUpload = (function () {
          * @param {Event} e 事件对象
          */
         _funGetFiles: function (e) {
-            var _this = this,
+            let _this = this,
                 option = _this._options;
-            // var _fileObj = _this._fileObj;
+            // let _fileObj = _this._fileObj;
             // 获取文件列表对象
-            var files = e.target.files;
+            let files = e.target.files;
 
             if (option.onReaderFile instanceof Function) {
                 option.onReaderFile({
@@ -249,7 +247,7 @@ var FileUpload = (function () {
             // 过滤文件
             files = _this._filter(files);
 
-            // for (var i = 0, len = files.length; i < len; i++) {
+            // for (let i = 0, len = files.length; i < len; i++) {
             //    _fileObj.fileFilter.push(files[i]);
             // }
             _this._files = files;
@@ -260,12 +258,12 @@ var FileUpload = (function () {
          * 提交上传
          */
         submitUpload: function () {
-            var _this = this,
+            let _this = this,
                 files = _this._files,
                 option = _this._options;
 
-            for (var i = 0, len = files.length; i < len; i++) {
-                var file = files[i];
+            for (let i = 0, len = files.length; i < len; i++) {
+                let file = files[i];
                 // 判断是否是自动上传
                 if (option.auto) {
                     _this._execUpload(file, i);
@@ -286,7 +284,7 @@ var FileUpload = (function () {
          * @param {Number} index 当前上传的文件项的索引
          */
         _execUpload: function (file, index) {
-            var _this = this;
+            let _this = this;
             try {
                 _this._fileReader(file, index);
             } catch (e) {
@@ -307,12 +305,12 @@ var FileUpload = (function () {
          */
         _getRatio: function(width, height, option) {
             // 宽度压缩的倍数（水平像素数）
-            var _width = (width / ((option.compressWidth > 0 && option.compressWidth) || width)) || 0;
+            let _width = (width / ((option.compressWidth > 0 && option.compressWidth) || width)) || 0;
             // 高度压缩的倍数（垂直像素数）
-            var _height = (height / ((option.compressHeight > 0 && option.compressHeight) || height)) || 0;
+            let _height = (height / ((option.compressHeight > 0 && option.compressHeight) || height)) || 0;
 
             // 面积压缩的倍数（总像素）
-            var _area = Math.sqrt(width * height / ((option.compressTotal > 0 && option.compressTotal) || width * height)) || 1;
+            let _area = Math.sqrt(width * height / ((option.compressTotal > 0 && option.compressTotal) || width * height)) || 1;
 
             // 返回最大压缩的倍数
             return Math.max(Math.max(_width, _height) || 0, _area) || 1;
@@ -324,10 +322,11 @@ var FileUpload = (function () {
          * @param {Element} img 需要压缩的图片
          * @param {String} type 图片格式
          * @param {Number} index 图片索引
+         * @param {File} file 图片原文件
          * @returns {String} 返回压缩后图片的base64码
          */
-        _compress: function (img, type, index) {
-            var _this = this,
+        _compress: function (img, type, index,file) {
+            let _this = this,
                 option = _this._options,
                 initSize = img.src.length,
                 _width = width = img.width,
@@ -336,11 +335,11 @@ var FileUpload = (function () {
                 _ratio = 0;
 
             //    用于压缩图片的canvas
-            var canvas = document.createElement('canvas'),
+            let canvas = document.createElement('canvas'),
                 ctx = canvas.getContext('2d');
 
             //    瓦片canvas
-            var tCanvas = document.createElement('canvas'),
+            let tCanvas = document.createElement('canvas'),
                 tctx = tCanvas.getContext('2d');
 
             _ratio = _this._getRatio(_width, _height, option);
@@ -355,12 +354,13 @@ var FileUpload = (function () {
             if (option.onCompressStart && option.onCompressStart instanceof Function) {
                 option.onCompressStart({
                     index: index, // 文件索引
+                    file:file,
                     // base64Data: img.src,//文件内容
                     size: initSize, // 压缩前大小
                     width: _width, // 压缩前的宽度
                     height: _height, // 压缩前的高度
-                    compressWidth: width, // 压缩前的宽度
-                    compressHeight: height, // 压缩前的高度
+                    compressWidth: width, // 压缩后的宽度
+                    compressHeight: height, // 压缩后的高度
                     ratio: ratio// 绽放的倍数
                 });
             }
@@ -373,20 +373,20 @@ var FileUpload = (function () {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // 如果图片像素大于100万则使用瓦片绘制
-            var count;
+            let count;
 
             if ((count = width * height / (option.tile || 1000000)) > 1) {
                 count = ~~(Math.sqrt(count) + 1); // 计算要分成多少块瓦片
 
                 //            计算每块瓦片的宽和高
-                var nw = ~~(width / count);
-                var nh = ~~(height / count);
+                let nw = ~~(width / count);
+                let nh = ~~(height / count);
 
                 tCanvas.width = nw;
                 tCanvas.height = nh;
 
-                for (var i = 0; i < count; i++) {
-                    for (var j = 0; j < count; j++) {
+                for (let i = 0; i < count; i++) {
+                    for (let j = 0; j < count; j++) {
                         tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
 
                         ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
@@ -397,7 +397,7 @@ var FileUpload = (function () {
             }
 
             // 进行最小压缩
-            var ndata = canvas.toDataURL(type || 'image/png', option.encoderOptions || 0.6);
+            let ndata = canvas.toDataURL(type || 'image/png', option.encoderOptions || 0.6);
 
             if (option.onCompress && option.onCompress instanceof Function) {
                 /**
@@ -409,14 +409,15 @@ var FileUpload = (function () {
                  */
                 option.onCompress({
                     index: index, // 文件索引
-                    // base64Data:ndata,//文件内容
-                    initSize: initSize, // 压缩前大小
-                    size: ndata.length, // 压缩后大小
+                    file:file,
+                    base64Data:ndata,//文件内容
+                    currentSize: ndata.length, // 压缩后大小
+                    size: initSize, // 压缩前大小
                     ratio: ~~(100 * (initSize - ndata.length) / initSize) + '%', // 压缩率
-                    initWidth: _width, // 压缩前的宽度
-                    initHeight: _height, // 压缩前的高度
-                    width: width, // 压缩前的宽度
-                    height: height // 压缩前的高度
+                    width: _width, // 压缩前的宽度
+                    height: _height, // 压缩前的高度
+                    compressWidth: width, // 压缩后的宽度
+                    compressHeight: height, // 压缩后的高度
                 });
             }
             tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;// 清除画布的大小
@@ -433,16 +434,16 @@ var FileUpload = (function () {
          * @returns {blob} 文件对象
          */
         _toBuffer: function (basestr, type, fileName) {
-            var text = window.atob(basestr.split(',')[1]),
+            let text = window.atob(basestr.split(',')[1]),
                 buffer = new Uint8Array(text.length);//, 
                 // pecent = 0,
                 // loop = null;
 
-            for (var i = 0; i < text.length; i++) {
+            for (let i = 0; i < text.length; i++) {
                 buffer[i] = text.charCodeAt(i); // 返回指定索引处字符的 Unicode
             }
 
-            var blob = getBlob([buffer], type);
+            let blob = getBlob([buffer], type);
             blob.name = fileName || '';
             return blob;
         },
@@ -456,7 +457,7 @@ var FileUpload = (function () {
          * @param {Number} total 总共有多少字节流
          */
         _onProgress: function (index, file, loaded, total) {
-            var _this = this,
+            let _this = this,
                 option = _this._options;
             if (option.onProgress && option.onProgress instanceof Function) {
                 option.onProgress({
@@ -466,8 +467,8 @@ var FileUpload = (function () {
                     total: total// 表示总共有多少字节流
                 });
             }
-            // var eleProgress = _this.find('#fileupload_' + instanceNumber + '_' + file.index + ' .uploadify-progress');
-            // var percent = (loaded / total * 100).toFixed(2) + '%';
+            // let eleProgress = _this.find('#fileupload_' + instanceNumber + '_' + file.index + ' .uploadify-progress');
+            // let percent = (loaded / total * 100).toFixed(2) + '%';
             // if (option.showUploadedSize) {
             //    eleProgress.nextAll('.progressnum .uploadedsize').text(formatFileSize(loaded));
             //    eleProgress.nextAll('.progressnum .totalsize').text(formatFileSize(total));
@@ -485,7 +486,7 @@ var FileUpload = (function () {
          * @param {Number} index 文件索引
          */
         _funUploadFile: function (file, index) {
-            var _this = this,
+            let _this = this,
                 xhr = createXMLHttpRequest() || false,
                 option = _this._options,
                 _fileObj = _this._fileObj;
@@ -502,23 +503,29 @@ var FileUpload = (function () {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
                             // 校正进度条和上传比例的误差
-                            // var thisfile = _this.find('#fileupload_' + instanceNumber + '_' + file.index);
+                            // let thisfile = _this.find('#fileupload_' + instanceNumber + '_' + file.index);
                             // thisfile.find('.uploadify-progress-bar').css('width', '100%');
                             // option.showUploadedSize && thisfile.find('.uploadedsize').text(thisfile.find('.totalsize').text());
                             // option.showUploadedPercent && thisfile.find('.up_percent').text('100%');
-                            var _data = xhr.responseText;
+                            let _data = xhr.responseText;
                             if (option.dataType == 'json') {
                                 _data = JSON.parse(xhr.responseText);
                             }
-                            option.onUploadSuccess && option.onUploadSuccess(file, _data, index);
+                            option.onUploadSuccess && option.onUploadSuccess({
+                                file:file,
+                                index:index
+                            }, _data);
                             /// /在指定的间隔时间后删掉进度条
                             // setTimeout(function () {
                             //    _this.find('#fileupload_' + instanceNumber + '_' + file.index).fadeOut();
                             // }, option.removeTimeout);
                         } else {
-                            option.onUploadError && option.onUploadError(file, xhr.responseText, index);
+                            option.onUploadError && option.onUploadError({
+                                file:file,
+                                index:index
+                            }, xhr);
                         }
-                        option.onUploadComplete && option.onUploadComplete(file, xhr.responseText, index);
+                        option.onUploadComplete && option.onUploadComplete(file, xhr);
                         // 清除文件选择框中的已有值
                         _fileObj.fileInput.value = '';
                     }
@@ -532,7 +539,7 @@ var FileUpload = (function () {
                 // 开始上传
                 xhr.open(option.method, option.uploader, option.async || true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                var fd = getFormData();// new FormData();
+                let fd = getFormData();// new FormData();
 
                 if (file.name) {
                     fd.append(option.fileObjName, file, file.name);
@@ -541,7 +548,7 @@ var FileUpload = (function () {
                 }
 
                 if (option.formData) {
-                    for (var key in option.formData) {
+                    for (let key in option.formData) {
                         fd.append(key, option.formData[key]);
                     }
                 }
@@ -551,7 +558,6 @@ var FileUpload = (function () {
         }
     };
 
-    return _Upload;
 
     /**
      * 创建createXMLHttpRequest
@@ -559,7 +565,7 @@ var FileUpload = (function () {
      * @returns {XMLHttpRequest} 返回XMLHttpRequestObject
      */
     function createXMLHttpRequest() {
-        var XMLHttpReq;
+        let XMLHttpReq;
         try {
             XMLHttpReq = new XMLHttpRequest();// 兼容非IE浏览器，直接创建XMLHTTP对象
         } catch (e) {
@@ -582,7 +588,7 @@ var FileUpload = (function () {
         try {
             return new Blob(buffer, {type: format});
         } catch (e) {
-            var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder)();
+            let bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder)();
             buffer.forEach(function (buf) {
                 bb.append(buf);
             });
@@ -595,7 +601,7 @@ var FileUpload = (function () {
      * @returns {FormData}
      */
     function getFormData() {
-        var isNeedShim = ~navigator.userAgent.indexOf('Android') &&
+        let isNeedShim = ~navigator.userAgent.indexOf('Android') &&
             ~navigator.vendor.indexOf('Google') &&
             !~navigator.userAgent.indexOf('Chrome') &&
             navigator.userAgent.match(/AppleWebKit\/(\d+)/).pop() <= 534;
@@ -610,7 +616,7 @@ var FileUpload = (function () {
     function FormDataShim() {
         // console.warn('using formdata shim');
 
-        var o = this,
+        let o = this,
             parts = [],
             boundary = Array(21).join('-') + (+new Date() * (1e16 * Math.random())).toString(36),
             oldSend = XMLHttpRequest.prototype.send;
@@ -629,7 +635,7 @@ var FileUpload = (function () {
 
         // Override XHR send()
         XMLHttpRequest.prototype.send = function (val) {
-            var fr,
+            let fr,
                 data,
                 oXHR = this;
 
@@ -667,7 +673,7 @@ var FileUpload = (function () {
      * @returns {Node} DOM节点/元素
      */
     function createNode(html, data) {
-        var _cloneItem = document.createDocumentFragment(),
+        let _cloneItem = document.createDocumentFragment(),
             _divDom = document.createElement('div');
 
         _cloneItem.appendChild(_divDom);
@@ -675,7 +681,7 @@ var FileUpload = (function () {
         _divDom.innerHTML = html;
         _divDomChilds = _divDom.childNodes || [];
 
-        for (var i = 0; i < _divDomChilds.length; i++) {
+        for (let i = 0; i < _divDomChilds.length; i++) {
             _cloneItem.appendChild(_divDomChilds[i]);
         }
         _cloneItem.removeChild(_divDom);
@@ -691,12 +697,12 @@ var FileUpload = (function () {
      * @returns {Object} 返回合并后的对象
      */
     function extend(def, nowObj) {
-        // var _this = this;
+        // let _this = this;
         def = def || {};
         if (!nowObj) {
             return def;
         }
-        for (var item in nowObj) {
+        for (let item in nowObj) {
             if (def[item] instanceof Object) {
                 extend(def[item], nowObj[item]);
             } else {
@@ -730,7 +736,7 @@ var FileUpload = (function () {
     //  * @returns {File|false}
     //  */
     // function getFile(index, files) {
-    //     for (var i = 0; i < files.length; i++) {
+    //     for (let i = 0; i < files.length; i++) {
     //         if (files[i].index == index) {
     //             return files[i];
     //         }
@@ -745,10 +751,10 @@ var FileUpload = (function () {
      * @returns {Array<String>} 返回文件类型列表
      */
     function getFileTypes(str) {
-        var result = [];
-        var arr1 = str.split(';');
-        for (var i = 0, len = arr1.length; i < len; i++) {
-            var _ext = arr1[i].split('.').pop();
+        let result = [];
+        let arr1 = str.split(';');
+        for (let i = 0, len = arr1.length; i < len; i++) {
+            let _ext = arr1[i].split('.').pop();
             if (_ext) {
                 result.push(_ext.toLowerCase());
             }
@@ -763,10 +769,10 @@ var FileUpload = (function () {
      * @returns {Array<String>} 文件MIME列表
      */
     function getMimeList(arr) {
-        var resArr = [];
+        let resArr = [];
         if (arr && arr.length > 0) {
-            for (var i = 0; i < arr.length; i++) {
-                var _mime = getMime(arr[i]);
+            for (let i = 0; i < arr.length; i++) {
+                let _mime = getMime(arr[i]);
                 if (_mime) {
                     resArr.push(_mime);
                 }
@@ -787,7 +793,7 @@ var FileUpload = (function () {
      * @returns {String}
      */
     function getMime(type) {
-        var res = '';
+        let res = '';
         if (!type) {
             return res;
         }
@@ -888,4 +894,6 @@ var FileUpload = (function () {
         //* .zip            aplication/zip
         //* .xlsx     application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     }
-})();
+// })();
+
+export const FileUpload = _Upload;
