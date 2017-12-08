@@ -24,6 +24,7 @@ function _Upload(el, opts) {
     this._el = el;
     var itemTemp = '';
     var defaults = {
+        fileKey: null, //当前绑定的key
         fileTypeExts: '*.jpg;*.png;*.gif;*.jpeg', // 允许上传的文件类型，格式'*.jpg;*.doc'
         uploader: '', // 'http://kmall.kidmadeto.com/kms/videoReplyPicUpload',//文件提交的地址
         auto: true, // 是否开启自动上传
@@ -77,7 +78,10 @@ _Upload.prototype = {
             _this._funGetFiles(e);
         });
         if (option.onInit && option.onInit instanceof Function) {
-            option.onInit && option.onInit(_el);
+            option.onInit && option.onInit({
+                el: _el,
+                fileKey: option.fileKey
+            });
         }
     },
 
@@ -176,6 +180,7 @@ _Upload.prototype = {
                     if (option.onSizeError instanceof Function) {
                         option.onSizeError({
                             el: _this._el,
+                            fileKey: option.fileKey,
                             index: i, // 当前文件的索引
                             fileName: thisFile.name, // 文件名
                             file: thisFile, // 文件
@@ -191,6 +196,7 @@ _Upload.prototype = {
                     if (option.onFileTypeError && option.onFileTypeError instanceof Function) {
                         option.onFileTypeError({
                             el: _this._el,
+                            fileKey: option.fileKey,
                             index: i, // 当前文件的索引
                             fileName: thisFile.name, // 文件名
                             file: thisFile, // 文件
@@ -248,6 +254,7 @@ _Upload.prototype = {
         if (option.onReaderFile instanceof Function) {
             option.onReaderFile({
                 el: _this._el,
+                fileKey: option.fileKey,
                 files: files
             });
         }
@@ -364,6 +371,7 @@ _Upload.prototype = {
         if (option.onCompressStart && option.onCompressStart instanceof Function) {
             option.onCompressStart({
                 el: _this._el,
+                fileKey: option.fileKey,
                 index: index, // 文件索引
                 file: file,
                 // base64Data: img.src,//文件内容
@@ -420,6 +428,7 @@ _Upload.prototype = {
              */
             option.onCompress({
                 el: _this._el,
+                fileKey: option.fileKey,
                 index: index, // 文件索引
                 file: file,
                 base64Data: ndata, // 文件内容
@@ -474,6 +483,7 @@ _Upload.prototype = {
         if (option.onProgress && option.onProgress instanceof Function) {
             option.onProgress({
                 el: _this._el,
+                fileKey: option.fileKey,
                 index: index,
                 file: file,
                 loaded: loaded, // 表示当前加载了多少字节流
@@ -526,6 +536,7 @@ _Upload.prototype = {
                         }
                         option.onUploadSuccess && option.onUploadSuccess({
                             el: _this._el,
+                            fileKey: option.fileKey,
                             file: file,
                             index: index
                         }, _data);
@@ -536,12 +547,14 @@ _Upload.prototype = {
                     } else {
                         option.onUploadError && option.onUploadError({
                             el: _this._el,
+                            fileKey: option.fileKey,
                             file: file,
                             index: index
                         }, xhr);
                     }
                     option.onUploadComplete && option.onUploadComplete({
                         el: _this._el,
+                        fileKey: option.fileKey,
                         file: file,
                         index: index
                     }, xhr);
@@ -552,6 +565,7 @@ _Upload.prototype = {
 
             option.onUploadStart && option.onUploadStart({
                 el: _this._el,
+                fileKey: option.fileKey,
                 file: file,
                 index: index,
                 fileName: file.name

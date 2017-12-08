@@ -10,6 +10,7 @@ export declare class FileUpload {
 
 
 export declare interface IFileUploadOption{
+    fileKey?:any;//当前绑定的KEY
     fileTypeExts?: string; // 允许上传的文件类型，格式'*.jpg;*.doc'
     uploader:  string;//文件提交的地址
     auto?: boolean; // 是否开启自动上传
@@ -43,7 +44,7 @@ export declare interface IFileUploadOption{
     onCompress?: IFileUploadBack<ICompressBackParams>; // 压缩完的回调
     onSizeError?: IFileUploadBack<ISizeErrorParams>; // 文件超过大小回调
     onFileTypeError?: IFileUploadBack<IFileTypeErrorParams>; // 文件类型错误回调
-    onInit?: IFileUploadBack<HTMLElement>, // 初始化时的回调
+    onInit?: IFileUploadBack<IInitParams>, // 初始化时的回调
     onCancel?: null// 删除掉某个文件后的回调函数，可传入参数file(此功能暂时没做)
 }
 /**
@@ -80,8 +81,17 @@ interface IFileUploadEndBack<T,D>{
  * 
  * @interface backParams
  */
-interface IBaseBackParams{
-    el:HTMLElement;//当前绑定上传的节点
+interface IInitParams{
+    el:HTMLElement;//当前绑定上传的节点,
+    fileKey:any;//当前绑定的key
+}
+
+/**
+ * 回调的参数
+ * 
+ * @interface backParams
+ */
+interface IBaseBackParams extends IInitParams{
     files:File;//文件
 }
 
