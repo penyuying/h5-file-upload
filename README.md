@@ -1,7 +1,6 @@
 # H5FileUpload
 html文件上传带图片压缩
 
-a JavaScript function for hashing messages with MD5.
 
 ## Installation
 

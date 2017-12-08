@@ -36,9 +36,9 @@ export declare interface IFileUploadOption{
     onReaderFile?: IFileUploadBack<IBaseBackParams>; // 读取文件的回调
     onUploadStart?: IFileUploadBack<IUploadStartBackParams>; // 上传开始时的回调
     onProgress?: IFileUploadBack<IProgressBackParams>; // 上传进度回调
-    onUploadSuccess?: IFileUploadEndBack<IBackBackParams,any>; // 上传成功的回调
-    onUploadComplete?: IFileUploadEndBack<IBackBackParams,XMLHttpRequest>; // 上传完成的回调
-    onUploadError?: IFileUploadEndBack<IBackBackParams,XMLHttpRequest>; // 上传失败的回调
+    onUploadSuccess?: IFileUploadEndBack<IBackParams,any>; // 上传成功的回调
+    onUploadComplete?: IFileUploadEndBack<IBackParams,XMLHttpRequest>; // 上传完成的回调
+    onUploadError?: IFileUploadEndBack<IBackParams,XMLHttpRequest>; // 上传失败的回调
     onCompressStart?:IFileUploadBack<ICompressStartBackParams>; // 开始压缩的回调
     onCompress?: IFileUploadBack<ICompressBackParams>; // 压缩完的回调
     onSizeError?: IFileUploadBack<ISizeErrorParams>; // 文件超过大小回调
@@ -105,32 +105,32 @@ interface IUploadStartBackParams extends IBackParams{
  * @extends {IBackParams}
  */
 interface IProgressBackParams extends IBackParams{
-    loaded: loaded, // 表示当前加载了多少字节流
-    total: total// 表示总共有多少字节流
+    loaded: number; // 表示当前加载了多少字节流
+    total: number;// 表示总共有多少字节流
 }
 
 /**
  * 压缩前的回调数据
  * 
- * @interface ICompressStartParams
+ * @interface ICompressStartBackParams
  * @extends {IBackParams}
  */
 interface ICompressStartBackParams extends IBackParams{
     size: number; // 压缩前大小
-    width: _width, // 压缩前的宽度
-    height: _height, // 压缩前的高度
-    compressWidth: width, // 压缩后的宽度
-    compressHeight: height, // 压缩后的高度
-    ratio: ratio// 绽放的倍数｜压缩率
+    width: number; // 压缩前的宽度
+    height: number; // 压缩前的高度
+    compressWidth: number; // 压缩后的宽度
+    compressHeight: number; // 压缩后的高度
+    ratio: number|string;// 绽放的倍数｜压缩率
 }
 
 /**
  * 压缩完成后的回调数据
  * 
  * @interface ICompressBackParams
- * @extends {ICompressStartParams}
+ * @extends {ICompressStartBackParams}
  */
-interface ICompressBackParams extends ICompressStartParams{
+interface ICompressBackParams extends ICompressStartBackParams{
     base64Data:string;//文件base64内容
     currentSize: number; // 压缩后大小
 }
