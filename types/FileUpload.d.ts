@@ -81,6 +81,7 @@ interface IFileUploadEndBack<T,D>{
  * @interface backParams
  */
 interface IBaseBackParams{
+    el:HTMLElement;//当前绑定上传的节点
     files:File;//文件
 }
 

@@ -175,7 +175,7 @@ _Upload.prototype = {
                     // alert('文件' + thisFile.name + '大小超出限制！');
                     if (option.onSizeError instanceof Function) {
                         option.onSizeError({
-                            index: i, //当前文件的索引
+                            index: i, // 当前文件的索引
                             fileName: thisFile.name, // 文件名
                             file: thisFile, // 文件
                             maxSize: formatFileSize(option.fileSizeLimit * 1024 || 0, true), // 限制的最大大小
@@ -189,7 +189,7 @@ _Upload.prototype = {
                 } else {
                     if (option.onFileTypeError && option.onFileTypeError instanceof Function) {
                         option.onFileTypeError({
-                            index: i, //当前文件的索引
+                            index: i, // 当前文件的索引
                             fileName: thisFile.name, // 文件名
                             file: thisFile, // 文件
                             type: thisFile.name.split('.').pop(), // 当前文件类型
@@ -334,8 +334,10 @@ _Upload.prototype = {
         var _this = this,
             option = _this._options,
             initSize = img.src.length,
-            _width = width = img.width,
-            _height = height = img.height,
+            width = img.width,
+            _width = width,
+            height = img.height,
+            _height = height,
             ratio = 1,
             _ratio = 0;
 
@@ -415,7 +417,7 @@ _Upload.prototype = {
             option.onCompress({
                 index: index, // 文件索引
                 file: file,
-                base64Data: ndata, //文件内容
+                base64Data: ndata, // 文件内容
                 currentSize: ndata.length, // 压缩后大小
                 size: initSize, // 压缩前大小
                 ratio: ~~(100 * (initSize - ndata.length) / initSize) + '%', // 压缩率
@@ -680,7 +682,7 @@ function createNode(html, data) {
     _cloneItem.appendChild(_divDom);
     // html = iReplaceHtmlData(html, data);
     _divDom.innerHTML = html;
-    _divDomChilds = _divDom.childNodes || [];
+    var _divDomChilds = _divDom.childNodes || [];
 
     for (var i = 0; i < _divDomChilds.length; i++) {
         _cloneItem.appendChild(_divDomChilds[i]);
