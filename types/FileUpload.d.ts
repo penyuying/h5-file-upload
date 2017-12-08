@@ -17,7 +17,7 @@ export declare interface IFileUploadOption{
     submitUpload?: boolean; // 是否开启自动提交
     method?: 'post'; // 发送请求的方式，get或post
     multi?: boolean; // 是否允许选择多个文件
-    formData?: IFormData, // 除文件以外发送给服务端的参数，格式：{key1:value1,key2:value2}
+    formData?: IFileUploadFormData, // 除文件以外发送给服务端的参数，格式：{key1:value1,key2:value2}
     dataType?:  string;//上传完成后返回的数据类型
     fileObjName?:  string; // 在后端接受文件的参数名称，如PHP中的$_FILES['file']
     fileSizeLimit?: number; // 允许上传的文件大小，单位KB
@@ -51,7 +51,7 @@ export declare interface IFileUploadOption{
  *
  * @interface IFormData
  */
-interface IFormData{
+export declare interface IFileUploadFormData{
     [key:string]:any
 }
 
