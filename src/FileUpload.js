@@ -106,7 +106,7 @@
                  *
                  */
                 function callback() {
-                    let data = _this._compress(img, file.type, index,file);// 压缩图片
+                    let data = _this._compress(img, file.type, index, file);// 压缩图片
                     data = _this._toBuffer(data, file.type, file.name);
 
                     _this._funUploadFile(data, index);
@@ -170,7 +170,7 @@
                         // alert('文件' + thisFile.name + '大小超出限制！');
                         if (option.onSizeError instanceof Function) {
                             option.onSizeError({
-                                index:i,//当前文件的索引
+                                index: i, // 当前文件的索引
                                 fileName: thisFile.name, // 文件名
                                 file: thisFile, // 文件
                                 maxSize: formatFileSize(option.fileSizeLimit * 1024 || 0, true), // 限制的最大大小
@@ -184,7 +184,7 @@
                     } else {
                         if (option.onFileTypeError && option.onFileTypeError instanceof Function) {
                             option.onFileTypeError({
-                                index:i,//当前文件的索引
+                                index: i, // 当前文件的索引
                                 fileName: thisFile.name, // 文件名
                                 file: thisFile, // 文件
                                 type: thisFile.name.split('.').pop(), // 当前文件类型
@@ -325,12 +325,14 @@
          * @param {File} file 图片原文件
          * @returns {String} 返回压缩后图片的base64码
          */
-        _compress: function (img, type, index,file) {
+        _compress: function (img, type, index, file) {
             let _this = this,
                 option = _this._options,
                 initSize = img.src.length,
-                _width = width = img.width,
-                _height = height = img.height,
+                width = img.width,
+                _width = width,
+                height = img.height,
+                _height = height,
                 ratio = 1,
                 _ratio = 0;
 
@@ -354,7 +356,7 @@
             if (option.onCompressStart && option.onCompressStart instanceof Function) {
                 option.onCompressStart({
                     index: index, // 文件索引
-                    file:file,
+                    file: file,
                     // base64Data: img.src,//文件内容
                     size: initSize, // 压缩前大小
                     width: _width, // 压缩前的宽度
@@ -409,15 +411,15 @@
                  */
                 option.onCompress({
                     index: index, // 文件索引
-                    file:file,
-                    base64Data:ndata,//文件内容
+                    file: file,
+                    base64Data: ndata, // 文件内容
                     currentSize: ndata.length, // 压缩后大小
                     size: initSize, // 压缩前大小
                     ratio: ~~(100 * (initSize - ndata.length) / initSize) + '%', // 压缩率
                     width: _width, // 压缩前的宽度
                     height: _height, // 压缩前的高度
                     compressWidth: width, // 压缩后的宽度
-                    compressHeight: height, // 压缩后的高度
+                    compressHeight: height // 压缩后的高度
                 });
             }
             tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;// 清除画布的大小
@@ -512,8 +514,8 @@
                                 _data = JSON.parse(xhr.responseText);
                             }
                             option.onUploadSuccess && option.onUploadSuccess({
-                                file:file,
-                                index:index
+                                file: file,
+                                index: index
                             }, _data);
                             /// /在指定的间隔时间后删掉进度条
                             // setTimeout(function () {
@@ -521,8 +523,8 @@
                             // }, option.removeTimeout);
                         } else {
                             option.onUploadError && option.onUploadError({
-                                file:file,
-                                index:index
+                                file: file,
+                                index: index
                             }, xhr);
                         }
                         option.onUploadComplete && option.onUploadComplete(file, xhr);
@@ -557,7 +559,6 @@
             }
         }
     };
-
 
     /**
      * 创建createXMLHttpRequest
@@ -679,7 +680,7 @@
         _cloneItem.appendChild(_divDom);
         // html = iReplaceHtmlData(html, data);
         _divDom.innerHTML = html;
-        _divDomChilds = _divDom.childNodes || [];
+        let _divDomChilds = _divDom.childNodes || [];
 
         for (let i = 0; i < _divDomChilds.length; i++) {
             _cloneItem.appendChild(_divDomChilds[i]);
