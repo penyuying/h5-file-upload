@@ -1,8 +1,8 @@
 {
   "name": "h5-file-upload",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "html5文件上传，带图片压缩功能",
-  "main": "./dist/FileUpload.js",
+  "main": "./dist/FileUpload.min.js",
   "scripts": {
     "build": "node build/build.js"
   },
