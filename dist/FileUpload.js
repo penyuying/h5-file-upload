@@ -1,12 +1,12 @@
 /*!
- * h5-file-upload v1.0.0
- * (c) 2017-2017 penyuying
+ * h5-file-upload v1.0.2
+ * (c) 2017-2018 penyuying
  * Released under the MIT License.
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.layer = {})));
+	(factory((global.FileUpload = {})));
 }(this, (function (exports) { 'use strict';
 
 // let FileUpload = (function () {

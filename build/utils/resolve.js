@@ -5,6 +5,6 @@ const path = require('path');
  * @param {any} p 路径名称
  * @returns {String}
  */
-module.exports= function resolve(p) {
+module.exports = function resolve(p) {
     return path.resolve(process.cwd(), '', p);
 };
