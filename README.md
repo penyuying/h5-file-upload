@@ -20,10 +20,12 @@ npm install h5-file-upload
 
     new FileUpload(dom, {
         fileTypeExts: '*.jpg;*.png;*.gif;*.jpeg', // 允许上传的文件类型，格式'*.jpg;*.doc'
+        accept: ''; // 为空的时候为自动按fileTypeExts(文件扩展名)获取(image/*)
+        capture: ''; // 调用摄像头或麦克风的类型(1、camera:拍照,accept的mime类型必须是image/*;
+                     //2、camcorder:录像,accept的mime类型必须是video/*;3、microphone:录音,accept的mime类型必须是audio/*;)
         uploader: '', //文件提交的地址
         auto: true, // 是否开启自动上传
         async: true, // true为异步
-        submitUpload: true, // 是否开启自动提交
         method: 'post', // 发送请求的方式，get或post
         multi: true, // 是否允许选择多个文件
         formData: null, // 发送给服务端的参数，格式：{key1:value1,key2:value2}

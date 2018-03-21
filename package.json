@@ -1,6 +1,6 @@
 {
   "name": "h5-file-upload",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "html5文件上传，带图片压缩功能，调用摄像头拍照、视频录制上传",
   "main": "./dist/FileUpload.min.js",
   "scripts": {
