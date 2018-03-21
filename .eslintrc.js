@@ -1,10 +1,7 @@
 module.exports = {
     root: true,
     globals:{
-        angular:true,
-        mui:true,
-        'jQuery':true,
-        '$':true
+        ActiveXObject: true
     },
     parser: 'babel-eslint',
     'env': {
@@ -14,10 +11,7 @@ module.exports = {
     parserOptions: {
         "ecmaVersion": 6,
         "ecmaFeatures": {
-            "jsx": true,
-            "vue": true,
-            "json":true,
-            "html":true
+            "js":true
         },
         sourceType: 'module'
     },
@@ -25,8 +19,6 @@ module.exports = {
     extends: 'standard',
     // required to lint *.vue files
     plugins: [
-        'html',
-        "json"
     ],
     // add your custom rules here
     'rules': {
@@ -60,7 +52,7 @@ module.exports = {
             }
         ],
         "linebreak-style": [2, "windows"],//换行风格
-        'no-undef':0,
+        'no-undef':2, //不能有未定义的变量
         // allow paren-less arrow functions
         'arrow-parens': 0,
         // allow async-await
@@ -71,7 +63,7 @@ module.exports = {
         "indent": 0,
         "eol-last": 0,
         "space-before-function-paren": 0,
-        "one-var": 0,
+        "one-var": 2,
         "eqeqeq": 0,
         "space-before-blocks": 2
     }

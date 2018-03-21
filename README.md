@@ -1,5 +1,5 @@
 # H5FileUpload
-html文件上传带图片压缩
+html文件上传带图片压缩（可调用摄像头拍照、视频录制上传）
 
 
 ## Installation
@@ -46,8 +46,7 @@ npm install h5-file-upload
         onCompress: null, // 压缩完的回调
         onCancel: function (file) {// 删除掉某个文件后的回调函数，可传入参数file(此功能暂时没做)
 
-        }
-
+        },
         onReaderFile: function () {// 读取文件的回调
             console.log('正在读取文件');
         },
@@ -56,15 +55,18 @@ npm install h5-file-upload
         },
         onSizeError: function () {// 文件超过大小回调
             console.log('上传图片过大');
-        }, 
+        },
         onFileTypeError: function () {// 文件类型错误回调
             console.log('上传的图片类型不允许！');
-        }, 
-        onUploadStart: function () {// 上传开始时的回调
-            console.log('正在上传，请稍后！！');
         },
         onInit: function () {// 初始化时的回调
             // alert('初始化');
+        },
+        onUploadStart: function () {// 上传开始时的回调
+            console.log('正在上传，请稍后！！');
+        },
+        onProgress: function (data) {// 上传成功的回调
+            console.log('已上传:' + data.loaded + '总大小为:' + data.total);
         },
         onUploadSuccess: function (file, data) {// 上传成功的回调
             console.log('上传成功');

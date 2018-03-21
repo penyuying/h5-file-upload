@@ -1,0 +1,8 @@
+/build/
+/config/
+/dist/
+/test/unit/coverage/
+/vuesrc/lib/Swiper/**/*.*
+/*.spec.js
+/*.spec.ts
+/test/

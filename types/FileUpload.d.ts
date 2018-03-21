@@ -12,14 +12,17 @@ export declare class FileUpload {
 export declare interface IFileUploadOption{
     fileKey?:any;//当前绑定的KEY
     fileTypeExts?: string; // 允许上传的文件类型，格式'*.jpg;*.doc'
+    accept?: string; // 为空的时候为自动按fileTypeExts(文件扩展名)获取
+    capture?: 'camera'|'camcorder'|'microphone'|'camera,camcorder'|'camera,microphone'|'camcorder,microphone'|'camera,camcorder,microphone'; // 调用摄像头或麦克风的类型(1、camera:拍照,accept的mime类型必须是image/*;
+                                                 //2、camcorder:录像,accept的mime类型必须是video/*;3、microphone:录音,accept的mime类型必须是audio/*;)
     uploader:  string;//文件提交的地址
     auto?: boolean; // 是否开启自动上传
     async?: boolean; // true为异步
-    submitUpload?: boolean; // 是否开启自动提交
+    // submitUpload?: boolean; // 是否开启自动提交
     method?: 'post'; // 发送请求的方式，get或post
     multi?: boolean; // 是否允许选择多个文件
     formData?: IFileUploadFormData, // 除文件以外发送给服务端的参数，格式：{key1:value1,key2:value2}
-    dataType?:  string;//上传完成后返回的数据类型
+    dataType?:  '' | 'json';//上传完成后返回的数据类型
     fileObjName?:  string; // 在后端接受文件的参数名称，如PHP中的$_FILES['file']
     fileSizeLimit?: number; // 允许上传的文件大小，单位KB
     showUploadedPercent?: boolean; // 是否实时显示上传的百分比，如20%
@@ -33,7 +36,7 @@ export declare interface IFileUploadOption{
     encoderOptions?: number; // jpeg图片的压缩质量(0.0-1.0)
     tile?:  number; // 需要使用瓦片的最小像素(瓦片大小)10万像素
     removeTimeout?:  number; // 上传完成后进度条的消失时间
-    itemTemplate?:  string; // 上传队列显示的模板
+    itemTemplate?:  string; // 上传队列显示的模板(此功能暂时没做)
     onReaderFile?: IFileUploadBack<IBaseBackParams>; // 读取文件的回调
     onUploadStart?: IFileUploadBack<IUploadStartBackParams>; // 上传开始时的回调
     onProgress?: IFileUploadBack<IProgressBackParams>; // 上传进度回调
@@ -60,7 +63,7 @@ export declare interface IFileUploadFormData{
 
 /**
  * 读取文件的回调
- * 
+ *
  * @interface IReaderFileBack
  */
 interface IFileUploadBack<T>{
@@ -69,7 +72,7 @@ interface IFileUploadBack<T>{
 
 /**
  * 读取文件的回调
- * 
+ *
  * @interface IReaderFileBack
  */
 interface IFileUploadEndBack<T,D>{
@@ -78,7 +81,7 @@ interface IFileUploadEndBack<T,D>{
 
 /**
  * 回调的参数
- * 
+ *
  * @interface backParams
  */
 interface IInitParams{
@@ -88,7 +91,7 @@ interface IInitParams{
 
 /**
  * 回调的参数
- * 
+ *
  * @interface backParams
  */
 interface IBaseBackParams extends IInitParams{
@@ -97,11 +100,12 @@ interface IBaseBackParams extends IInitParams{
 
 interface IBackParams extends IBaseBackParams{
     index: number;//当前上传文件的索引
+    fileCount: number; // 文件数量
 }
 
 /**
  * 开始上传的回调参数
- * 
+ *
  * @interface IUploadStart
  * @extends {IBackParams}
  */
@@ -111,7 +115,7 @@ interface IUploadStartBackParams extends IBackParams{
 
 /**
  * 文件上传进度回调参数
- * 
+ *
  * @interface IProgressParams
  * @extends {IBackParams}
  */
@@ -122,7 +126,7 @@ interface IProgressBackParams extends IBackParams{
 
 /**
  * 压缩前的回调数据
- * 
+ *
  * @interface ICompressStartBackParams
  * @extends {IBackParams}
  */
@@ -137,7 +141,7 @@ interface ICompressStartBackParams extends IBackParams{
 
 /**
  * 压缩完成后的回调数据
- * 
+ *
  * @interface ICompressBackParams
  * @extends {ICompressStartBackParams}
  */
@@ -147,7 +151,7 @@ interface ICompressBackParams extends ICompressStartBackParams{
 }
 /**
  * 文件超过限制大小的回调数据
- * 
+ *
  * @interface ICompressBackParams
  * @extends {IUploadStartBackParams}
  */
@@ -158,7 +162,7 @@ interface ISizeErrorParams extends IUploadStartBackParams{
 
 /**
  * 文件类型错误的回调数据
- * 
+ *
  * @interface ICompressBackParams
  * @extends {IUploadStartBackParams}
  */
