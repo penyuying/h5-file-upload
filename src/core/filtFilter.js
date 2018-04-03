@@ -33,7 +33,7 @@ export function filtFilter(files, el, option) {
                 }
                 continue;
             }
-            if (inArray(thisFile.name.split('.').pop(), typeArray) >= 0) {
+            if (!typeArray || typeArray.length <= 0 || inArray('*', typeArray) >= 0 || inArray(thisFile.name.split('.').pop(), typeArray) >= 0) {
                 arr.push(thisFile);
             } else {
                 if (option.onFileTypeError && option.onFileTypeError instanceof Function) {
