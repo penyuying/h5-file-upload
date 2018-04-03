@@ -1,5 +1,5 @@
 /*!
- * h5-file-upload v1.0.3
+ * h5-file-upload v1.0.4
  * (c) 2017-2018 penyuying
  * Released under the MIT License.
  */
@@ -383,7 +383,7 @@ function extend(def, nowObj) {
 
 var config = {
     fileKey: null, // 当前绑定的key
-    fileTypeExts: '*.jpg;*.png;*.gif;*.jpeg', // 允许上传的文件类型，格式'*.jpg;*.doc'
+    fileTypeExts: '*', // '*.jpg;*.png;*.gif;*.jpeg'允许上传的文件类型，格式'*.jpg;*.doc'
     accept: '', // 为空的时候为自动获取
     capture: '', // 调用摄像头或麦克风的类型(1、camera:拍照,accept的mime类型必须是image/*;
     // 2、camcorder:录像,accept的mime类型必须是video/*;3、microphone:录音,accept的mime类型必须是audio/*;)
@@ -474,8 +474,8 @@ function createNode(html, data) {
  */
 function getMime(type) {
     var res = '';
-    if (!type) {
-        return res;
+    if (!type || type === '*') {
+        return type || res;
     }
     type = (type + '').replace(/\*|\.|\s+/g, '').toLowerCase();
 

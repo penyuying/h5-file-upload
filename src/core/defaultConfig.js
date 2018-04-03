@@ -1,6 +1,6 @@
 export const config = {
     fileKey: null, // 当前绑定的key
-    fileTypeExts: '*.jpg;*.png;*.gif;*.jpeg', // 允许上传的文件类型，格式'*.jpg;*.doc'
+    fileTypeExts: '*', // '*.jpg;*.png;*.gif;*.jpeg'允许上传的文件类型，格式'*.jpg;*.doc'
     accept: '', // 为空的时候为自动获取
     capture: '', // 调用摄像头或麦克风的类型(1、camera:拍照,accept的mime类型必须是image/*;
                                                  // 2、camcorder:录像,accept的mime类型必须是video/*;3、microphone:录音,accept的mime类型必须是audio/*;)

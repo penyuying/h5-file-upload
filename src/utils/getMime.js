@@ -6,8 +6,8 @@
  */
 export function getMime(type) {
     let res = '';
-    if (!type) {
-        return res;
+    if (!type || type === '*') {
+        return type || res;
     }
     type = (type + '').replace(/\*|\.|\s+/g, '').toLowerCase();
 
