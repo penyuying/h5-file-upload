@@ -153,8 +153,14 @@ FileUpload.prototype = {
                fileCount: fileCount
            });
            // 开始上传
-           xhr.open(option.method, option.uploader, option.async || true);
+           xhr.open(option.method, option.uploader, option.async || false);
            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+           if (option.headers) {
+                for (const key in option.headers) {
+                    xhr.setRequestHeader(key, option.headers[key]);
+                }
+           }
+
            let fd = getFormData();// new FormData();
 
            if (file.name) {

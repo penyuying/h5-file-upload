@@ -1,6 +1,6 @@
 /*!
- * h5-file-upload v1.0.6
- * (c) 2017-2018 penyuying
+ * h5-file-upload v1.0.7
+ * (c) 2017-2022 penyuying
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -90,16 +90,16 @@ function toBuffer(basestr, type, fileName) {
  * @returns {Number} 返回最大压缩的倍数
  */
 function getRatio(width, height, option) {
-    // 宽度压缩的倍数（水平像素数）
-    var _width = width / (option.compressWidth > 0 && option.compressWidth || width) || 0;
-    // 高度压缩的倍数（垂直像素数）
-    var _height = height / (option.compressHeight > 0 && option.compressHeight || height) || 0;
+  // 宽度压缩的倍数（水平像素数）
+  var _width = width / (option.compressWidth > 0 && option.compressWidth || width) || 0;
+  // 高度压缩的倍数（垂直像素数）
+  var _height = height / (option.compressHeight > 0 && option.compressHeight || height) || 0;
 
-    // 面积压缩的倍数（总像素）
-    var _area = Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal || width * height)) || 1;
+  // 面积压缩的倍数（总像素）
+  var _area = Math.sqrt(width * height / (option.compressTotal > 0 && option.compressTotal || width * height)) || 1;
 
-    // 返回最大压缩的倍数
-    return Math.max(Math.max(_width, _height) || 0, _area) || 1;
+  // 返回最大压缩的倍数
+  return Math.max(Math.max(_width, _height) || 0, _area) || 1;
 }
 
 /**
@@ -822,8 +822,14 @@ FileUpload.prototype = {
                 fileCount: fileCount
             });
             // 开始上传
-            xhr.open(option.method, option.uploader, option.async || true);
+            xhr.open(option.method, option.uploader, option.async || false);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            if (option.headers) {
+                for (var key in option.headers) {
+                    xhr.setRequestHeader(key, option.headers[key]);
+                }
+            }
+
             var fd = getFormData(); // new FormData();
 
             if (file.name) {
@@ -833,8 +839,8 @@ FileUpload.prototype = {
             }
 
             if (option.formData) {
-                for (var key in option.formData) {
-                    fd.append(key, option.formData[key]);
+                for (var _key in option.formData) {
+                    fd.append(_key, option.formData[_key]);
                 }
             }
 
