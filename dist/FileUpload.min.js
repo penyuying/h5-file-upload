@@ -1,5 +1,5 @@
 /*!
- * h5-file-upload v1.0.7
+ * h5-file-upload v1.0.9
  * (c) 2017-2022 penyuying
  * Released under the MIT License.
  */
